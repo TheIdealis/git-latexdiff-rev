@@ -14,3 +14,9 @@ and get a pdf with the differences between the current commit (0) and the commit
 foo@bar:~$ git-latexdiff-rev -r 1,2 -i 'foo.tex'
 ```
 and so on.
+
+## TODO
+- fix the option to save the document in case off an error in `latexdiff`
+- fix the option to change the verbosity of the output
+- create an option for displaying the pdf
+- look for installed pdf-viewers

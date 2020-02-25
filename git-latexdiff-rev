@@ -1,0 +1,30 @@
+#!/usr/bin/python3
+
+from subprocess import call, Popen, PIPE
+import re 
+import argparse
+
+parser = argparse.ArgumentParser(description='Wrap git-latexdiff')
+parser.add_argument('-r', '--rev_nums', help='...', default='0,1')
+parser.add_argument('-i', '--infile', required=True, help='...')
+parser.add_argument('-o', '--outfile', help='...', default='diff.pdf')
+# parser.add_argument("-v", "--verbose", help="modify output verbosity", action = "store_true")
+parser.add_argument("-c", "--cleanup", help="remove the tex file", action = "store_true")
+args = parser.parse_args()
+
+process = Popen(['git', 'log'], stdout=PIPE, stderr=PIPE)
+out = process.communicate()[0]
+reg = re.compile(r'commit (\w+)')
+ids = reg.findall(str(out.replace(b'\n', b' ')))
+
+r1, r2 = [int(x) for x in args.rev_nums.split(',')]
+cls = '--cleanup all' if args.cleanup else ''
+cmd = f'git-latexdiff --main {args.infile} --bibtex --output {args.outfile} {cls} {ids[r2]} {ids[r1]}'
+#process = Popen(cmd.split(), stdout=PIPE, stderr=PIPE)
+process = Popen(cmd.split())
+process.wait()
+#out, err = process.communicate()
+#if args.verbose:
+#  print(out, err)
+
+# Popen(f'evince {args.outfile}'.split(), stdout=PIPE, stderr=PIPE)
